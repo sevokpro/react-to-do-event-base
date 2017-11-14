@@ -4,7 +4,7 @@ let webpack = require('webpack');
 module.exports = (envOptions) => {
     const config = {
         entry: {
-            index: 'src/index.jsx'
+            index: 'src/index.tsx'
         },
         resolve: {
             extensions: [`.tsx`, `.ts`, `.js`, 'jsx'],
@@ -15,13 +15,15 @@ module.exports = (envOptions) => {
         },
         module: {
             rules: [{
-                test: /\.jsx$/,
-                use: {
+                test: /\.tsx$/,
+                use: [{
                     loader: 'babel-loader',
                     options: {
                         presets: ['es2015', 'react']
                     }
-                }
+                },{
+                    loader: 'awesome-typescript-loader'
+                }]
             }]
         },
         plugins: [new HtmlWebpackPlugin()]
