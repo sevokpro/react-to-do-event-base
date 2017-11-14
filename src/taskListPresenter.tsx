@@ -1,9 +1,9 @@
 import * as React from "react";
-import {Component} from "React"
+import {PureComponent} from "React"
 import {ITask} from "./ITask";
 import {Observable} from "rxjs/Observable";
 
-class TaskListPresenter extends Component<{list: Observable<Array<ITask>>}>{
+class TaskListPresenter extends PureComponent<{list: Observable<Array<ITask>>}>{
     constructor(props){
         super(props);
         this
@@ -12,6 +12,9 @@ class TaskListPresenter extends Component<{list: Observable<Array<ITask>>}>{
             .subscribe( next => {
                 console.log(next);
             })
+    }
+    shouldComponentUpdate(){
+        return false
     }
     render(){
         return (
