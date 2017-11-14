@@ -1,0 +1,26 @@
+import * as React from "react";
+import {Component} from "React"
+import {ITask} from "./ITask";
+import {Observable} from "rxjs/Observable";
+
+class TaskListPresenter extends Component<{list: Observable<Array<ITask>>}>{
+    constructor(props){
+        super(props);
+        this
+            .props
+            .list
+            .subscribe( next => {
+                console.log(next);
+            })
+    }
+    render(){
+        return (
+            <ul>
+                <li>item1</li>
+                <li>item2</li>
+            </ul>
+        )
+    }
+}
+
+export {TaskListPresenter}
