@@ -1,5 +1,4 @@
 let HtmlWebpackPlugin = require('html-webpack-plugin');
-let webpack = require('webpack');
 
 module.exports = (envOptions) => {
     const config = {
@@ -13,9 +12,10 @@ module.exports = (envOptions) => {
                 "./"
             ]
         },
+        devtool: 'source-map',
         module: {
             rules: [{
-                test: /\.tsx$/,
+                test: /\.tsx|.ts$/,
                 use: [{
                     loader: 'babel-loader',
                     options: {

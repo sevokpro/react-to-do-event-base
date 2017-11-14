@@ -4,23 +4,25 @@ import {ITask} from "./ITask";
 import {Observable} from "rxjs/Observable";
 
 class TaskListPresenter extends PureComponent<{list: Observable<Array<ITask>>}>{
+    taskList: Array<ITask>;
+
     constructor(props){
         super(props);
         this
             .props
             .list
             .subscribe( next => {
-                console.log(next);
+                this.taskList = next;
+                this.forceUpdate()
             })
     }
-    shouldComponentUpdate(){
-        return false
-    }
+
     render(){
         return (
             <ul>
-                <li>item1</li>
-                <li>item2</li>
+                {this.taskList && this.taskList.map(el => {
+                    return <li>{el.name}</li>
+                })}
             </ul>
         )
     }
