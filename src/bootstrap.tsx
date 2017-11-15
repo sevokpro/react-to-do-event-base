@@ -1,29 +1,44 @@
 import * as React from "react"
 import {PureComponent} from "react";
 import {TaskListPresenter} from "./taskListPresenter";
-import {Observable} from "rxjs";
 import {ITask} from "./ITask";
 import {TaskCardPresenter} from "./taskCardPresenter";
 import {TaskListFilter} from "./taskListFilter";
-import {TaskStatusVendor} from "./taskStatusVendor";
+import {TaskPrioryVendor} from "./taskStatusVendor";
+import {BorderContainer} from "./borderContainer";
+import {TaskListManager} from "./taskListManager";
+import {ReplaySubject} from "rxjs/ReplaySubject";
 
 class Bootstrap extends PureComponent{
-    private taskList: Observable<Array<ITask>> =
-        Observable
-            .interval(1e3)
-            .map( next => Math.floor(Math.random() * 10) )
-            .switchMap( next => Observable
-                .range(0, next)
-                .map(next => ({completeTime: null, deadLine: null, description: null, priory: "base", name: 'any'} as ITask))
-                .toArray());
+    private taskListManager: TaskListManager =
+        new TaskListManager();
 
-    private taskStatusVendor: TaskStatusVendor =
-        new TaskStatusVendor();
+    private taskPrioryVendor: TaskPrioryVendor =
+        new TaskPrioryVendor();
 
+    private whenTaskPrioryChange =
+        new ReplaySubject(1);
     private taskStatusChangeEmitter: (value) => void =
         value => {
-            console.log(value);
+            this.whenTaskPrioryChange.next(value)
         };
+
+    private taskList =
+        this.taskListManager
+            .whenTaskListChange
+            .combineLatest(this.whenTaskPrioryChange)
+            .map( ([taskList, prioryFilter]) => {
+                if(prioryFilter === 'all'){
+                    return taskList
+                }
+                return taskList.filter( el => el.priory === prioryFilter )
+            } );
+
+    private createNewTaskEmitter =
+        {
+            emit: task => console.log(task)
+        }
+
 
     private emptyTask: ITask =
         {
@@ -42,9 +57,14 @@ class Bootstrap extends PureComponent{
         return (
             <div>
                 <div>Hello world</div>
-                <TaskCardPresenter task={this.emptyTask}/>
-                <TaskListFilter statusVendor={this.taskStatusVendor} changeFilterValueEmitter={this.taskStatusChangeEmitter}/>
-                <TaskListPresenter list={this.taskList}/>
+                <BorderContainer>
+                    <div>Create task:</div>
+                    <TaskCardPresenter task={this.emptyTask} taskPrioryList={this.taskPrioryVendor} inputCompleteEmitter={this.createNewTaskEmitter}/>
+                </BorderContainer>
+                <BorderContainer>
+                    <TaskListFilter prioryVendor={this.taskPrioryVendor} changeFilterValueEmitter={this.taskStatusChangeEmitter}/>
+                    <TaskListPresenter list={this.taskList}/>
+                </BorderContainer>
             </div>
         )
     }

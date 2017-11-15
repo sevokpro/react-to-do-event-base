@@ -1,18 +1,18 @@
 import * as React from "react"
 import {PureComponent} from "react";
-import {TaskStatusVendor} from "./taskStatusVendor";
+import {TaskPrioryVendor} from "./taskStatusVendor";
 
-class TaskListFilter extends PureComponent<{statusVendor: TaskStatusVendor, changeFilterValueEmitter: (emit: string) => void}>{
-    statusList: Array<string>;
+class TaskListFilter extends PureComponent<{prioryVendor: TaskPrioryVendor, changeFilterValueEmitter: (emit: string) => void}>{
+    prioryList: Array<string>;
     constructor(props){
         super(props)
         this
             .props
-            .statusVendor
+            .prioryVendor
             .whenStatusListChange
             .map( next => ['all', ...next])
             .subscribe( next => {
-                this.statusList = next;
+                this.prioryList = next;
                 this.props.changeFilterValueEmitter(next[0])
                 this.forceUpdate()
             })
@@ -23,7 +23,7 @@ class TaskListFilter extends PureComponent<{statusVendor: TaskStatusVendor, chan
     render() {
         return (
             <select onChange={this.changeValueHandler.bind(this)}>
-                {this.statusList && this.statusList.map(el => {
+                {this.prioryList && this.prioryList.map(el => {
                     return <option>{el}</option>
                 })}
             </select>
