@@ -26,6 +26,8 @@ class TaskCardPresenter extends PureComponent<{
         new BehaviorSubject(null);
     private whenPrioryChange: Subject<string> =
         new BehaviorSubject(null);
+    private whenTimeStampChange: Subject<number> =
+        new BehaviorSubject(null)
 
     private whenFormModelChange: Observable<ITask> =
         Observable
@@ -34,15 +36,17 @@ class TaskCardPresenter extends PureComponent<{
                 this.whenDescriptionChange,
                 this.whenCompleteTimeChange,
                 this.whenDeadLineTimeChange,
-                this.whenPrioryChange
+                this.whenPrioryChange,
+                this.whenTimeStampChange
             )
-            .map( ([name, desc, comlete, deadLine, priory]) =>
+            .map( ([name, desc, comlete, deadLine, priory, timeStamp]) =>
                 ({
                     name: name,
                     description: desc,
                     completeTime: comlete,
                     deadLine: deadLine,
-                    priory: priory
+                    priory: priory,
+                    uuid: timeStamp
                 } as ITask));
 
     private whenOkButtonClick: Subject<null> =
@@ -64,7 +68,6 @@ class TaskCardPresenter extends PureComponent<{
         this
             .whenOkButtonClick
             .switchMap( next => this.whenFormModelChange.first() )
-            .distinct()
             .subscribe( next => this.props.inputCompleteEmitter.emit( next ) )
 
         this.props.task.subscribe( next => {
@@ -73,6 +76,7 @@ class TaskCardPresenter extends PureComponent<{
             this.whenDeadLineTimeChange.next(next.deadLine)
             this.whenCompleteTimeChange.next(next.completeTime)
             this.whenDescriptionChange.next(next.description)
+            this.whenTimeStampChange.next(next.uuid)
             this.forceUpdate()
         } )
     }

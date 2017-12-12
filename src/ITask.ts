@@ -3,7 +3,8 @@ interface ITask{
     description: string,
     completeTime: Date,
     deadLine: Date,
-    priory: 'base' | 'important' | 'veryImportant'
+    priory: 'base' | 'important' | 'veryImportant',
+    uuid?: any
 }
 
 export {ITask}

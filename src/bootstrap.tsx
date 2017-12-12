@@ -64,7 +64,7 @@ class Bootstrap extends PureComponent{
 
     private updateTaskEmitter =
         {
-            emit: task => console.log(task)
+            emit: task => this.taskListManager.updateTask(task)
         }
     constructor(props){
         super(props);

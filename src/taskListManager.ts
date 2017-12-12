@@ -9,19 +9,22 @@ class TaskListManager{
         completeTime: null,
         deadLine: null,
         priory: "base",
-        name: 'lol'
+        name: 'lol',
+        uuid: Math.random()
     },{
         description: 'lol2',
         completeTime: null,
         deadLine: null,
         priory: "important",
-        name: 'lol2'
+        name: 'lol2',
+        uuid: Math.random()
     },{
         description: 'lol3',
         completeTime: null,
         deadLine: null,
         priory: "veryImportant",
-        name: 'lol3'
+        name: 'lol3',
+        uuid: Math.random()
     }];
 
     constructor(){
@@ -44,7 +47,17 @@ class TaskListManager{
             .subscribe( next => {
                 switch (patchType){
                     case 'add':
+                        element.uuid =
+                            Math.random()
                         next.push(element);
+                        break;
+                    case "update":
+                        const index =
+                            next
+                                .findIndex( el => element.uuid === el.uuid )
+
+                        next[index] =
+                            element
                         break;
                 }
                 this.taskList.next(next)
@@ -53,6 +66,10 @@ class TaskListManager{
 
     addTask(task: ITask){
         this.storagePatcher('add', task)
+    }
+
+    updateTask(task: ITask){
+        this.storagePatcher("update", task)
     }
 }
 
