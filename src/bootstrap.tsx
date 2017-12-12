@@ -8,6 +8,8 @@ import {TaskPrioryVendor} from "./taskStatusVendor";
 import {BorderContainer} from "./borderContainer";
 import {TaskListManager} from "./taskListManager";
 import {ReplaySubject} from "rxjs/ReplaySubject";
+import {Observable} from "rxjs/Observable";
+import {Subject} from "rxjs/Subject";
 
 class Bootstrap extends PureComponent{
     private taskListManager: TaskListManager =
@@ -36,19 +38,34 @@ class Bootstrap extends PureComponent{
 
     private createNewTaskEmitter =
         {
-            emit: task => console.log(task)
+            emit: task => this.taskListManager.addTask(task)
         }
 
 
-    private emptyTask: ITask =
-        {
-            priory: null,
-            description: null,
-            deadLine: null,
-            completeTime: null,
-            name: null
-        };
+    private emptyTask: Observable<ITask> =
+        Observable
+            .of({
+                priory: null,
+                description: null,
+                deadLine: null,
+                completeTime: null,
+                name: null
+            })
 
+    private selectedTask: Subject<ITask> =
+        new ReplaySubject(1)
+
+    private taskClickEmitter =
+        {
+            emit: (task: ITask) => {
+                this.selectedTask.next(task)
+            }
+        }
+
+    private updateTaskEmitter =
+        {
+            emit: task => console.log(task)
+        }
     constructor(props){
         super(props);
     }
@@ -62,8 +79,12 @@ class Bootstrap extends PureComponent{
                     <TaskCardPresenter task={this.emptyTask} taskPrioryList={this.taskPrioryVendor} inputCompleteEmitter={this.createNewTaskEmitter}/>
                 </BorderContainer>
                 <BorderContainer>
+                    <div>Update Task:</div>
+                    <TaskCardPresenter task={this.selectedTask} taskPrioryList={this.taskPrioryVendor} inputCompleteEmitter={this.updateTaskEmitter}></TaskCardPresenter>
+                </BorderContainer>
+                <BorderContainer>
                     <TaskListFilter prioryVendor={this.taskPrioryVendor} changeFilterValueEmitter={this.taskStatusChangeEmitter}/>
-                    <TaskListPresenter list={this.taskList}/>
+                    <TaskListPresenter list={this.taskList} taskClickEmitter={this.taskClickEmitter}/>
                 </BorderContainer>
             </div>
         )

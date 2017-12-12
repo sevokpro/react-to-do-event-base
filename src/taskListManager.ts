@@ -47,6 +47,7 @@ class TaskListManager{
                         next.push(element);
                         break;
                 }
+                this.taskList.next(next)
             })
     }
 

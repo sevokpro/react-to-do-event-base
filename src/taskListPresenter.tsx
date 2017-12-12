@@ -3,7 +3,10 @@ import {PureComponent} from "React"
 import {ITask} from "./ITask";
 import {Observable} from "rxjs/Observable";
 
-class TaskListPresenter extends PureComponent<{list: Observable<Array<ITask>>}>{
+class TaskListPresenter extends PureComponent<{
+    list: Observable<Array<ITask>>,
+    taskClickEmitter: {emit: (task: ITask) => void}
+}>{
     taskList: Array<ITask>;
 
     constructor(props){
@@ -21,7 +24,7 @@ class TaskListPresenter extends PureComponent<{list: Observable<Array<ITask>>}>{
         return (
             <ul>
                 {this.taskList && this.taskList.map(el => {
-                    return <li>{el.name}</li>
+                    return <li onClick={this.props.taskClickEmitter.emit.bind(this.props.taskClickEmitter, el)}>{el.name}</li>
                 })}
             </ul>
         )

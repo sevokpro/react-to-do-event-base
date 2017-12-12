@@ -4,11 +4,10 @@ import {ITask} from "./ITask";
 import {TaskPrioryVendor} from "./taskStatusVendor";
 import {Observable} from "rxjs/Observable";
 import {Subject} from "rxjs/Subject";
-import {ReplaySubject} from "rxjs/ReplaySubject";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 
 class TaskCardPresenter extends PureComponent<{
-    task: ITask,
+    task: Observable<ITask>,
     taskPrioryList: TaskPrioryVendor,
     inputCompleteEmitter: {
         emit: (task: ITask) => void
@@ -66,14 +65,29 @@ class TaskCardPresenter extends PureComponent<{
             .whenOkButtonClick
             .switchMap( next => this.whenFormModelChange.first() )
             .subscribe( next => this.props.inputCompleteEmitter.emit( next ) )
+
+        this.props.task.subscribe( next => {
+            this.whenNameChange.next(next.name)
+            this.whenPrioryChange.next(next.priory)
+            this.whenDeadLineTimeChange.next(next.deadLine)
+            this.whenCompleteTimeChange.next(next.completeTime)
+            this.whenDescriptionChange.next(next.description)
+            this.forceUpdate()
+        } )
     }
 
     private valueMulticaster(el: any, stream: Subject<any>, event: string = 'input'): void {
-        Observable
-            .fromEvent(el, event)
-            .pluck('target', 'value')
-            .multicast(stream)
-            .connect()
+        if( el !== null){
+            Observable
+                .fromEvent(el, event)
+                .pluck('target', 'value')
+                .multicast(stream)
+                .connect()
+
+            stream
+                .subscribe( next => el.value = next );
+        }
+
     }
 
     render(){
@@ -109,12 +123,15 @@ class TaskCardPresenter extends PureComponent<{
                     </select>
                 </div>
                 <div>
-                    <button ref={el =>
-                        Observable
-                            .fromEvent(el, 'click')
-                            .mapTo(null)
-                            .multicast(this.whenOkButtonClick)
-                            .connect()}>
+                    <button ref={el =>{
+                        if(el !== null){
+                            Observable
+                                .fromEvent(el, 'click')
+                                .mapTo(null)
+                                .multicast(this.whenOkButtonClick)
+                                .connect()
+                        }}
+                    }>
                         ok
                     </button>
                 </div>
