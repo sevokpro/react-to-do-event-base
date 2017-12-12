@@ -64,6 +64,7 @@ class TaskCardPresenter extends PureComponent<{
         this
             .whenOkButtonClick
             .switchMap( next => this.whenFormModelChange.first() )
+            .distinct()
             .subscribe( next => this.props.inputCompleteEmitter.emit( next ) )
 
         this.props.task.subscribe( next => {
@@ -123,15 +124,7 @@ class TaskCardPresenter extends PureComponent<{
                     </select>
                 </div>
                 <div>
-                    <button ref={el =>{
-                        if(el !== null){
-                            Observable
-                                .fromEvent(el, 'click')
-                                .mapTo(null)
-                                .multicast(this.whenOkButtonClick)
-                                .connect()
-                        }}
-                    }>
+                    <button onClick={this.whenOkButtonClick.next.bind(this.whenOkButtonClick, null)}>
                         ok
                     </button>
                 </div>
