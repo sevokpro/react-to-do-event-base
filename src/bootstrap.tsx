@@ -66,6 +66,11 @@ class Bootstrap extends PureComponent{
         {
             emit: task => this.taskListManager.updateTask(task)
         }
+
+    private removeTaskEmitter =
+        {
+            emit: task => console.log(task)
+        }
     constructor(props){
         super(props);
     }
@@ -84,7 +89,11 @@ class Bootstrap extends PureComponent{
                 </BorderContainer>
                 <BorderContainer>
                     <TaskListFilter prioryVendor={this.taskPrioryVendor} changeFilterValueEmitter={this.taskStatusChangeEmitter}/>
-                    <TaskListPresenter list={this.taskList} taskClickEmitter={this.taskClickEmitter}/>
+                    <TaskListPresenter
+                        list={this.taskList}
+                        updateTaskEmitter={this.taskClickEmitter}
+                        removeTaskEmitter={this.removeTaskEmitter}
+                        />
                 </BorderContainer>
             </div>
         )

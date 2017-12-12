@@ -5,7 +5,8 @@ import {Observable} from "rxjs/Observable";
 
 class TaskListPresenter extends PureComponent<{
     list: Observable<Array<ITask>>,
-    taskClickEmitter: {emit: (task: ITask) => void}
+    updateTaskEmitter: {emit: (task: ITask) => void},
+    removeTaskEmitter: {emit: (task: ITask) => void}
 }>{
     taskList: Array<ITask>;
 
@@ -24,7 +25,12 @@ class TaskListPresenter extends PureComponent<{
         return (
             <ul>
                 {this.taskList && this.taskList.map(el => {
-                    return <li onClick={this.props.taskClickEmitter.emit.bind(this.props.taskClickEmitter, el)}>{el.name}</li>
+                    return <li>
+                        <button onClick={this.props.removeTaskEmitter.emit.bind(this.props.removeTaskEmitter, el)}>remove</button>
+                        <span> | </span>
+                        <button onClick={this.props.updateTaskEmitter.emit.bind(this.props.updateTaskEmitter, el)}>update</button>
+                        <span> | {el.name}</span>
+                    </li>
                 })}
             </ul>
         )
